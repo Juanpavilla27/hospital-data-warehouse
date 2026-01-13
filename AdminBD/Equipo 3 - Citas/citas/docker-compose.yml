@@ -1,0 +1,39 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-citas
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: myrootpass
+      MYSQL_DATABASE: citas_medicas
+      MYSQL_USER:    citas_user
+      MYSQL_PASSWORD: cit@spass
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    restart: always
+    networks:
+      - nifi-net
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: flask-api-citas
+    ports:
+      - "5003:5003"
+    depends_on:
+      - mysql
+    environment:
+      - FLASK_ENV=development
+    restart: always
+    networks:
+      - nifi-net
+
+volumes:
+  mysql_data:
+
+networks:
+  nifi-net:
+    external: true

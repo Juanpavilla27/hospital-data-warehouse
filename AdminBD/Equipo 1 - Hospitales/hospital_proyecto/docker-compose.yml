@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16
+    container_name: hospital-db
+    environment:
+      POSTGRES_DB: Hospital
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin*
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-db/:/docker-entrypoint-initdb.d/
+    restart: unless-stopped
+    networks:
+      - nifi-net
+
+  api:
+    build: ./app  # Construye la imagen desde la carpeta "app"
+    container_name: hospital-api
+    environment:
+      DB_HOST: db  # Usa el nombre del servicio de la BD en Docker
+      DB_PORT: 5432
+      DB_NAME: Hospital
+      DB_USER: postgres
+      DB_PASSWORD: admin*
+    ports:
+      - "5002:5002"  # Expone el puerto de Flask
+    depends_on:
+      - db
+    networks:
+      - nifi-net
+
+networks:
+  nifi-net:
+    external: true

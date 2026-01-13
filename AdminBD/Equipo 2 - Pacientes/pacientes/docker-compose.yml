@@ -1,0 +1,55 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver-pacientes
+    ports:
+      - "1434:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Password123!"
+    volumes:
+      - sqlserverdata:/var/opt/mssql
+    networks:
+      - nifi-net
+    restart: unless-stopped
+
+  sql-init:
+    image: mcr.microsoft.com/mssql-tools
+    container_name: sqlserver-init
+    depends_on:
+      - sqlserver
+    volumes:
+      - ./sqlserver/init:/scripts
+    entrypoint: /bin/bash
+    command: >
+      -c "
+      echo '⏳ Esperando SQL Server...' &&
+      sleep 30 &&
+      /opt/mssql-tools/bin/sqlcmd -S sqlserver -U SA -P 'Password123!' -i /scripts/init.sql
+      "
+    networks:
+      - nifi-net
+    restart: "no"
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: flask-api-pacientes
+    ports:
+      - "5001:5001"
+    depends_on:
+      - sqlserver
+      - sql-init
+    environment:
+      - FLASK_ENV=development
+    networks:
+      - nifi-net
+    restart: always
+
+volumes:
+  sqlserverdata:
+
+networks:
+  nifi-net:
+    external: true  # O cambia a false si quieres que se cree internamente

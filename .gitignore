@@ -1,0 +1,40 @@
+####################################
+# Apache NiFi (DO NOT COMMIT)
+####################################
+**/nifi/**
+**/conf-backup/**
+**/content_repository/**
+**/database_repository/**
+**/flowfile_repository/**
+**/provenance_repository/**
+**/logs/**
+**/state/**
+
+####################################
+# MongoDB runtime data
+####################################
+**/data/**
+**/*.wt
+**/*.lock
+**/journal/**
+**/diagnostic.data/**
+**/WiredTiger*
+**/storage.bson
+**/sizeStorer.wt
+
+####################################
+# Python
+####################################
+**/__pycache__/
+**/*.pyc
+
+####################################
+# OS / IDE
+####################################
+.DS_Store
+Thumbs.db
+
+####################################
+# Env / Secrets
+####################################
+**/.env
