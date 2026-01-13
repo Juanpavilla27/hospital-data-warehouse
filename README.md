@@ -85,4 +85,4 @@ Planned improvements include:
 
 ## 📷 Screenshots / Diagrams
 
-(Add screenshots of schemas, Power BI dashboards, or architecture diagrams here)
+![NiFi Data Flow](assets/flow.png)
